@@ -1,0 +1,27 @@
+body{
+	text-align: center;
+	margin: 100px auto;
+}
+
+label{
+	font-size: 20px;
+}
+
+.chart
+{
+	width: 30%;
+	float: left;
+	margin: 1.66%;
+}
+
+table
+{
+	width: 100%;
+}
+
+td
+{	
+	 font-size: 25px;
+	 height: 70px;
+	 text-align: center ;
+}
