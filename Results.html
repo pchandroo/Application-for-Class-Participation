@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vote Results</title>
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/simplex/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="iclick.css">
+</head>
+<body onload = "JavaScript:AutoRefresh(5000);">  <!-- Funtion call for auto refresh of page -->
+    
+    <!-- div for Table -->
+	<div class = "chart">
+			<table class="table table-striped" id="result_table">
+                <tbody id="result_table_body"></tbody>         
+            </table>
+	</div>
+
+    <!-- div for pie chart -->
+	<div id = "pie" class = "chart">
+	</div>
+
+    <!-- div for Bar chart -->
+	<div id = "bar" class = "chart">  
+	</div>
+
+    <br>
+    <div>
+    <button class="btn btn-primary btn-lg" onclick="cleartable()">Clear Table</button>  <!-- Button to clear the table Data -->
+    </div>
+
+    <!-- Importing JQuery -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+
+    <!-- Importing Bootstrap JS -->
+    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+
+    <!-- Importing Plotly for Charts -->
+    <script src = "https://cdn.plot.ly/plotly-latest.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        //Auto refreshes the page
+        function AutoRefresh( t ) {
+                    setTimeout("location.reload(true);", t);
+        }
+
+        //Function to clear the table
+        function cleartable(){
+
+            //Ajax call
+            var url = 'http://localhost:3000/clear';
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.withCredentials = false;
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) 
+                {
+                    alert("Table cleared successfully");
+                }
+                else
+                {
+                    alert("Failed");
+                }
+            }
+            xhr.send();
+
+        }
+    
+        //Function to load the charts and table when the page is loaded
+        document.addEventListener("DOMContentLoaded", function(event) { 
+
+            //Ajax call to get the results and its respective count
+            var url = 'http://localhost:3000/results';
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.withCredentials = false;
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) 
+                {
+                    var data = JSON.parse(this.responseText);
+                    console.log(data);
+
+                    //Creating a table
+                    var element = document.getElementById('result_table_body');
+                    for(var key in data) 
+                    {
+                         
+                         element.innerHTML += "<tr><td>"+key+"</td><td>"+data[key]+"</td></tr>";
+
+                    }
+
+                    //Creating a Pie and Bar Chart
+                    var data_pie = [{
+                             values: [data.A, data.B, data.C, data.D],
+                             labels: ['A', 'B', 'C', 'D'],
+                             type: 'pie'
+                          }];
+
+                    var data_bar = [{
+                             y: [data.A, data.B, data.C, data.D],
+                             x: ['A', 'B', 'C', 'D'],
+                             type: 'bar'
+                          }];
+
+                          Plotly.newPlot('pie', data_pie);
+                          Plotly.newPlot('bar', data_bar);
+                }
+            }
+            xhr.send();
+
+        });
+
+
+    </script>
+
+</body>
+</html>
